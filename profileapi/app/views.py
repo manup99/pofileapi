@@ -7,6 +7,8 @@ from .models import UserProfile
 from rest_framework.authentication import TokenAuthentication
 from .permissions import UpdateOwnProfile
 from rest_framework import filters
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.settings import api_settings
 class hello_world(APIView):
     serializer_class=HelloSerializer
     def get(self,request,format=None):
@@ -70,9 +72,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
     """Handling creating and updating profiles"""
     serializer_class=ProfileSerializer
     queryset = UserProfile.objects.all()
+    """Authentication type add , at the end"""
     authentication_classes=(TokenAuthentication,)
+    """Permission feature add ,at the end"""
     permission_classes = (UpdateOwnProfile,)
+    """Searching feature add , at the end"""
     filter_backends=(filters.SearchFilter,)
     search_fields=('name','email')
+
+class LoginViewSet(ObtainAuthToken):
+    """Handle creating user authentication tokens"""
+    renderer_classes=api_settings.DEFAULT_RENDERER_CLASSES
 
 
