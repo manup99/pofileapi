@@ -1,12 +1,12 @@
 from django.urls import path,include
-from .views import hello_world,HelloViewSet,ProfileViewSet,LoginViewSet
+from .views import hello_world,HelloViewSet,ProfileViewSet,LoginViewSet,FeedViewSet
 from rest_framework.routers import DefaultRouter
 
 
 router=DefaultRouter()
 router.register('hello-viewset',HelloViewSet,basename='hello-viewset')
 router.register('profile-viewset',ProfileViewSet)
-
+router.register('feed-viewset',FeedViewSet)
 """No need to assign base name as it will itself configure name through queryset provided"""
 
 urlpatterns=[

@@ -1,11 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import HelloSerializer,ProfileSerializer
+from .serializers import HelloSerializer,ProfileSerializer,FeedSerializer
 from rest_framework import status
 from rest_framework import viewsets
-from .models import UserProfile
+from .models import UserProfile,Feed
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.authentication import TokenAuthentication
-from .permissions import UpdateOwnProfile
+from .permissions import UpdateOwnProfile,UpdateOwnFeed
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
@@ -83,5 +84,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class LoginViewSet(ObtainAuthToken):
     """Handle creating user authentication tokens"""
     renderer_classes=api_settings.DEFAULT_RENDERER_CLASSES
+
+class FeedViewSet(viewsets.ModelViewSet):
+    """Handles creating updating profile feed item"""
+    authentication_classes=(TokenAuthentication,)
+    serializer_class=FeedSerializer
+    permission_classes=(UpdateOwnFeed,IsAuthenticatedOrReadOnly,)
+    """If IsAuthenticated is used then you cannot even read until n unless you are not logged.This is the dff btw IsAuthRO and IsAuth"""
+    queryset=Feed.objects.all()
+    """Customise creating object in views"""
+    def perform_create(self,serializer):
+        serializer.save(user=self.request.user)
 
 
